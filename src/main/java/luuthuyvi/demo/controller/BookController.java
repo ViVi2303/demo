@@ -58,7 +58,7 @@ public class BookController {
         // Lưu đầu sách đã cập nhật
         bookService.saveBook(book);
 
-        // Chuyển hướng người dùng đến trang danh sách đầu sách
+        // Chuyển hướng người dùng đến trang danh sách đầu sáchh
         return "redirect:/books";
 
     }
