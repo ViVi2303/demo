@@ -7,6 +7,7 @@ import luuthuyvi.demo.entity.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,23 +26,30 @@ public class BookController {
         model.addAttribute("books", books);
         return "book/list";
     }
+
     @GetMapping("/add")
-    public  String addBookForm(Model model){
-        model.addAttribute("book",new Book());
-        model.addAttribute("categories",categoryService.getAllCategories());
+    public String addBookForm(Model model) {
+        model.addAttribute("book", new Book());
+        model.addAttribute("categories", categoryService.getAllCategories());
         return "book/add";
     }
+
     @PostMapping("/add")
-    public String addBook(@ModelAttribute("book") Book book){
+    public String addBook(@ModelAttribute("book") Book book, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", categoryService.getAllCategories());
+            return "book/add";
+        }
         bookService.addBook(book);
         return "redirect:/books";
     }
+
     @GetMapping("/edit/{id}")
     public String editBook(@PathVariable("id") Long id, Model model) {
         Book book = bookService.getBookById(id);
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("book", bookService.getBookById(id));
-        model.addAttribute("categories",categoryService.getAllCategories());
+        model.addAttribute("categories", categoryService.getAllCategories());
         return "book/edit";
     }
 
@@ -58,7 +66,7 @@ public class BookController {
         // Lưu đầu sách đã cập nhật
         bookService.saveBook(book);
 
-        // Chuyển hướng người dùng đến trang danh sách đầu sáchh
+        // Chuyển hướng người dùng đến trang danh sách đầu sách
         return "redirect:/books";
 
     }
